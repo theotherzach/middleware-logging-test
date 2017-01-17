@@ -8,7 +8,23 @@ export default (initialState = {}) => {
   // ======================================================
   // Middleware Configuration
   // ======================================================
-  const middleware = [thunk]
+  const middleware = [thunk, function ({getState}) {
+    return (next) => (action) => {
+      let KEY_OF_INTEREST = "counter"
+      let KEYS_PROPER_VALUE = 0
+      let originalState = getState()
+      console.timeStamp(`${KEY_OF_INTEREST} original state: ${originalState[KEY_OF_INTEREST]}`)
+      console.log("originalState: ", originalState)
+      console.log("will dispatch ", action)
+      let returnValue = next(action)
+      console.log("nextState: ", getState())
+      console.assert(KEYS_PROPER_VALUE === getState()[KEY_OF_INTEREST],
+        `${KEY_OF_INTEREST} value is not ${KEYS_PROPER_VALUE}`)
+      console.timeStamp(`${KEY_OF_INTEREST}: ${originalState[KEY_OF_INTEREST]}`)
+      console.log("originalState: ", originalState)
+      return returnValue
+    }
+  }]
 
   // ======================================================
   // Store Enhancers
